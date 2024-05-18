@@ -4,6 +4,7 @@ const usersRouter = require('./routes/users');
 const productsRouter = require('./routes/products');
 const sellersRouter = require('./routes/sellers');
 const ordersRouter = require('./routes/orders');
+const recommendationRoutes = require('./routes/recommendationRoutes');
 
 const app = express();
 const port = 3000;
@@ -16,6 +17,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/sellers', sellersRouter);
 app.use('/api/orders', ordersRouter);
+app.use('/api/recommendation', recommendationRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
