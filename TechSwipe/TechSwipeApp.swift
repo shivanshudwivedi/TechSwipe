@@ -1,17 +1,17 @@
-//
-//  TechSwipeApp.swift
-//  TechSwipe
-//
-//  Created by Shivanshu Dwivedi on 5/28/24.
-//
-
 import SwiftUI
+import FirebaseCore
 
 @main
 struct TechSwipeApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
     }
 }
+
+

@@ -1,0 +1,6 @@
+framework module Pods_TechSwipe {
+  umbrella header "Pods-TechSwipe-umbrella.h"
+
+  export *
+  module * { export * }
+}
