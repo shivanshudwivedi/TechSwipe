@@ -11,8 +11,7 @@ class ProductViewModel: ObservableObject {
             case .success(let products):
                 self?.products = products
             case .failure(let error):
-                // Handle error
-                print("Error fetching products: \(error.localizedDescription)")
+                print("Error fetching products: \(error)")
             }
         }
     }

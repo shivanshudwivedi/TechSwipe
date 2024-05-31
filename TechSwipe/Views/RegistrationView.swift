@@ -1,5 +1,4 @@
 import SwiftUI
-import FirebaseAuth
 
 struct RegistrationView: View {
     @StateObject private var authViewModel = AuthViewModel()
@@ -19,7 +18,7 @@ struct RegistrationView: View {
                 .padding()
             
             Button(action: {
-                authViewModel.register()
+                authViewModel.registerWithEmail()
             }) {
                 Text("Register")
                     .foregroundColor(.white)
@@ -30,11 +29,5 @@ struct RegistrationView: View {
         }
         .padding()
         .navigationBarTitle("Registration")
-    }
-}
-
-struct RegistrationView_Previews: PreviewProvider {
-    static var previews: some View {
-        RegistrationView()
     }
 }
