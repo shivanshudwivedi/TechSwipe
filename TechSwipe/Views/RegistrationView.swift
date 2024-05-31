@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct RegistrationView: View {
-    @StateObject private var authViewModel = AuthViewModel()
+    @EnvironmentObject private var authViewModel: AuthViewModel
     
     var body: some View {
         VStack {
+            Text("Create an Account")
+                .font(.largeTitle)
+            
             TextField("Name", text: $authViewModel.name)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
@@ -21,6 +24,7 @@ struct RegistrationView: View {
                 authViewModel.registerWithEmail()
             }) {
                 Text("Register")
+                    .font(.headline)
                     .foregroundColor(.white)
                     .padding()
                     .background(Color.blue)

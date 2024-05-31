@@ -8,10 +8,18 @@ struct SignInView: View {
             Text("Welcome to TechSwipe")
                 .font(.largeTitle)
             
-            Spacer()
+            TextField("Email", text: $authViewModel.email)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
             
-            Button(action: signInWithGoogle) {
-                Text("Sign in with Google")
+            SecureField("Password", text: $authViewModel.password)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+            
+            Button(action: {
+                authViewModel.loginWithEmail()
+            }) {
+                Text("Sign In")
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding()
@@ -19,25 +27,11 @@ struct SignInView: View {
                     .cornerRadius(10)
             }
             
-            Spacer()
-        }
-    }
-    
-    private func signInWithGoogle() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let viewController = windowScene.windows.first?.rootViewController else {
-            return
-        }
-        
-        authViewModel.loginWithGoogle(presenting: viewController) { result in
-            switch result {
-            case .success:
-                // Sign-in successful, handle navigation or UI updates
-                break
-            case .failure(let error):
-                // Handle sign-in error
-                print("Error signing in with Google: \(error)")
+            NavigationLink(destination: RegistrationView()) {
+                Text("Don't have an account? Register")
+                    .foregroundColor(.blue)
             }
         }
+        .padding()
     }
 }

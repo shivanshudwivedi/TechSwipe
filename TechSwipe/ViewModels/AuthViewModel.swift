@@ -1,22 +1,35 @@
 import Foundation
 import FirebaseAuth
-import GoogleSignIn
 
 class AuthViewModel: ObservableObject {
     @Published var isLoggedIn = false
+    @Published var email = ""
+    @Published var password = ""
+    @Published var name = ""
     @Published var currentUser: User?
     
     private let authService = AuthService()
     
-    func loginWithGoogle(presenting viewController: UIViewController, completion: @escaping (Result<Void, Error>) -> Void) {
-        authService.loginWithGoogle(presenting: viewController) { [weak self] result in
+    func loginWithEmail() {
+        authService.loginWithEmail(email: email, password: password) { [weak self] result in
             switch result {
             case .success:
                 self?.isLoggedIn = true
                 self?.fetchCurrentUser()
-                completion(.success(()))
             case .failure(let error):
-                completion(.failure(error))
+                print("Error logging in: \(error)")
+            }
+        }
+    }
+    
+    func registerWithEmail() {
+        authService.registerWithEmail(email: email, password: password, name: name) { [weak self] result in
+            switch result {
+            case .success:
+                self?.isLoggedIn = true
+                self?.fetchCurrentUser()
+            case .failure(let error):
+                print("Error registering: \(error)")
             }
         }
     }

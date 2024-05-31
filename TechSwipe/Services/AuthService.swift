@@ -1,48 +1,33 @@
 import Foundation
 import FirebaseAuth
-import GoogleSignIn
 
 class AuthService {
     func isLoggedIn() -> Bool {
-        return Auth.auth().currentUser!= nil
+        return Auth.auth().currentUser != nil
     }
     
-    func loginWithGoogle(presenting viewController: UIViewController, completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let clientID = FirebaseApp.app()?.options.clientID else {
-            completion(.failure(NSError(domain: "com.techswipe.error", code: 0, userInfo: [NSLocalizedDescriptionKey: "No valid client ID found"])))
-            return
-        }
-        
-        let configuration = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = configuration
-        
-        GIDSignIn.sharedInstance.signIn(with: viewController, presenting: viewController) { user, error in
+    func loginWithEmail(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { _, error in
             if let error = error {
                 completion(.failure(error))
-                return
+            } else {
+                completion(.success(()))
             }
-            
-            guard let authentication = user?.authentication,
-                  let idToken = authentication.idToken else {
-                completion(.failure(NSError(domain: "com.techswipe.error", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unable to get ID token"])))
-                return
-            }
-            
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                           accessToken: authentication.accessToken)
-            
-            Auth.auth().signIn(with: credential) { result, error in
-                if let error = error {
-                    completion(.failure(error))
-                } else {
-                    completion(.success(()))
-                }
+        }
+    }
+    
+    func registerWithEmail(email: String, password: String, name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                // Save user's name to Firestore or Realtime Database
+                completion(.success(()))
             }
         }
     }
     
     func logout() {
-        GIDSignIn.sharedInstance.signOut()
         try? Auth.auth().signOut()
     }
     
