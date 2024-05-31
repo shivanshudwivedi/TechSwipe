@@ -2,13 +2,48 @@ import Foundation
 
 class ProductService {
     func fetchProducts(completion: @escaping (Result<[Product], Error>) -> Void) {
-        // Fetch products from the backend API
-        // Example implementation:
-        let products = [
-            Product(id: "1", name: "Product 1", description: "Description 1", price: 9.99),
-            Product(id: "2", name: "Product 2", description: "Description 2", price: 19.99),
-            Product(id: "3", name: "Product 3", description: "Description 3", price: 29.99)
-        ]
-        completion(.success(products))
+        guard let url = URL(string: "http://localhost:3000/api/products") else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                do {
+                    let products = try JSONDecoder().decode([Product].self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(products))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            } else if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }.resume()
+    }
+    
+    func searchProducts(query: String, completion: @escaping (Result<[Product], Error>) -> Void) {
+        guard let url = URL(string: "http://localhost:3000/api/products/search?name=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")") else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                do {
+                    let products = try JSONDecoder().decode([Product].self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(products))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            } else if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }.resume()
     }
 }

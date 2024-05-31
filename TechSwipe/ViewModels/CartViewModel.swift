@@ -2,6 +2,7 @@ import Foundation
 
 class CartViewModel: ObservableObject {
     @Published var cartItems: [CartItem] = []
+    
     private let cartService = CartService()
     
     func fetchCartItems() {
@@ -26,16 +27,13 @@ class CartViewModel: ObservableObject {
         }
     }
     
-    func removeFromCart(at offsets: IndexSet) {
-        offsets.forEach { index in
-            let cartItem = cartItems[index]
-            cartService.removeFromCart(cartItem) { [weak self] result in
-                switch result {
-                case .success(let cartItems):
-                    self?.cartItems = cartItems
-                case .failure(let error):
-                    print("Error removing from cart: \(error)")
-                }
+    func removeFromCart(_ cartItem: CartItem) {
+        cartService.removeFromCart(cartItem) { [weak self] result in
+            switch result {
+            case .success(let cartItems):
+                self?.cartItems = cartItems
+            case .failure(let error):
+                print("Error removing from cart: \(error)")
             }
         }
     }

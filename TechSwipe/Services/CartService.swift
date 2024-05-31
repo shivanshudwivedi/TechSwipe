@@ -1,26 +1,87 @@
 import Foundation
 
 class CartService {
+    
     func fetchCartItems(completion: @escaping (Result<[CartItem], Error>) -> Void) {
-        // Fetch cart items from the backend API
-        // Example implementation:
-        let product1 = Product(id: "1", name: "Product 1", description: "Description 1", price: 9.99)
-        let product2 = Product(id: "2", name: "Product 2", description: "Description 2", price: 19.99)
-        let cartItem1 = CartItem(id: "1", product: product1, quantity: 2)
-        let cartItem2 = CartItem(id: "2", product: product2, quantity: 1)
-        completion(.success([cartItem1, cartItem2]))
+        guard let url = URL(string: "http://localhost:3000/api/cart") else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                do {
+                    let cartItems = try JSONDecoder().decode([CartItem].self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(cartItems))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            } else if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }.resume()
     }
     
     func addToCart(_ product: Product, completion: @escaping (Result<[CartItem], Error>) -> Void) {
-        // Add product to the cart in the backend
-        // Example implementation:
-        let cartItem = CartItem(id: UUID().uuidString, product: product, quantity: 1)
-        completion(.success([cartItem]))
+        guard let url = URL(string: "http://localhost:3000/api/cart") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body: [String: Any] = [
+            "productId": product.id,
+            "quantity": 1
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let cartItems = try JSONDecoder().decode([CartItem].self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(cartItems))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            } else if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }.resume()
     }
     
     func removeFromCart(_ cartItem: CartItem, completion: @escaping (Result<[CartItem], Error>) -> Void) {
-        // Remove product from the cart in the backend
-        // Example implementation:
-        completion(.success([]))
+        guard let url = URL(string: "http://localhost:3000/api/cart/\(cartItem.id)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                do {
+                    let cartItems = try JSONDecoder().decode([CartItem].self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(cartItems))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
+                }
+            } else if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }.resume()
     }
 }

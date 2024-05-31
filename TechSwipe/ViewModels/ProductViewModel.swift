@@ -15,4 +15,15 @@ class ProductViewModel: ObservableObject {
             }
         }
     }
+    
+    func searchProducts(query: String) {
+        productService.searchProducts(query: query) { [weak self] result in
+            switch result {
+            case .success(let products):
+                self?.products = products
+            case .failure(let error):
+                print("Error searching products: \(error)")
+            }
+        }
+    }
 }

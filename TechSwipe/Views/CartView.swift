@@ -13,12 +13,18 @@ struct CartView: View {
                         Text("\(cartItem.quantity)")
                     }
                 }
-                .onDelete(perform: cartViewModel.removeFromCart)
+                .onDelete { indexSet in
+                    indexSet.forEach { index in
+                        let cartItem = cartViewModel.cartItems[index]
+                        cartViewModel.removeFromCart(cartItem)
+                    }
+                }
             }
             .onAppear {
                 cartViewModel.fetchCartItems()
             }
             .navigationTitle("Cart")
+            .navigationBarItems(trailing: EditButton())
         }
     }
 }
