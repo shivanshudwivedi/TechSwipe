@@ -49,13 +49,24 @@ struct ProductCard: View {
     
     var body: some View {
         VStack {
+            AsyncImage(url: URL(string: product.imageUrl)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 150)
+            } placeholder: {
+                ProgressView()
+            }
+            
             Text(product.name)
                 .font(.headline)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
+            
             Text("$\(product.price, specifier: "%.2f")")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+            
             Text(product.description)
                 .font(.caption)
                 .lineLimit(3)

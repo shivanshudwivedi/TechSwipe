@@ -6,4 +6,5 @@ struct Product: Identifiable, Decodable {
     let description: String
     let price: Double
     let category: String
+    let imageUrl: String
 }

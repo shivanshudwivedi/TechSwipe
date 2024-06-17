@@ -19,8 +19,8 @@ class CartViewModel: ObservableObject {
     func addToCart(_ product: Product) {
         cartService.addToCart(product) { [weak self] result in
             switch result {
-            case .success(let cartItems):
-                self?.cartItems = cartItems
+            case .success(let cartItem):
+                self?.cartItems.append(cartItem)
             case .failure(let error):
                 print("Error adding to cart: \(error)")
             }
@@ -30,8 +30,10 @@ class CartViewModel: ObservableObject {
     func removeFromCart(_ cartItem: CartItem) {
         cartService.removeFromCart(cartItem) { [weak self] result in
             switch result {
-            case .success(let cartItems):
-                self?.cartItems = cartItems
+            case .success:
+                if let index = self?.cartItems.firstIndex(where: { $0.id == cartItem.id }) {
+                    self?.cartItems.remove(at: index)
+                }
             case .failure(let error):
                 print("Error removing from cart: \(error)")
             }

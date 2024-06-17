@@ -2,12 +2,13 @@ const db = require('../firebase');
 const { v4: uuidv4 } = require('uuid');
 
 class Product {
-  constructor(name, description, price, category, sellerId) {
+  constructor(name, description, price, category, sellerId, imageUrl) {
     this.name = name;
     this.description = description;
     this.price = price;
     this.category = category;
     this.seller_id = sellerId;
+    this.image_url = imageUrl;
     this.created_at = new Date();
     this.updated_at = new Date();
   }
@@ -17,7 +18,7 @@ class Product {
     await db.collection('products').doc(id).set({ ...product, id });
     return id;
   }
-
+  
   static async findById(id) {
     const product = await db.collection('products').doc(id).get();
     return product.exists ? product.data() : null;

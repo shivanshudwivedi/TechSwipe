@@ -25,7 +25,7 @@ class CartService {
         }.resume()
     }
     
-    func addToCart(_ product: Product, completion: @escaping (Result<[CartItem], Error>) -> Void) {
+    func addToCart(_ product: Product, completion: @escaping (Result<CartItem, Error>) -> Void) {
         guard let url = URL(string: "http://localhost:3000/api/cart") else { return }
         
         var request = URLRequest(url: url)
@@ -42,9 +42,9 @@ class CartService {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
-                    let cartItems = try JSONDecoder().decode([CartItem].self, from: data)
+                    let cartItem = try JSONDecoder().decode(CartItem.self, from: data)
                     DispatchQueue.main.async {
-                        completion(.success(cartItems))
+                        completion(.success(cartItem))
                     }
                 } catch {
                     DispatchQueue.main.async {
@@ -59,27 +59,20 @@ class CartService {
         }.resume()
     }
     
-    func removeFromCart(_ cartItem: CartItem, completion: @escaping (Result<[CartItem], Error>) -> Void) {
+    func removeFromCart(_ cartItem: CartItem, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let url = URL(string: "http://localhost:3000/api/cart/\(cartItem.id)") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                do {
-                    let cartItems = try JSONDecoder().decode([CartItem].self, from: data)
-                    DispatchQueue.main.async {
-                        completion(.success(cartItems))
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        completion(.failure(error))
-                    }
-                }
-            } else if let error = error {
+            if let error = error {
                 DispatchQueue.main.async {
                     completion(.failure(error))
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(.success(()))
                 }
             }
         }.resume()

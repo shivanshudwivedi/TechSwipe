@@ -16,6 +16,7 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/sellers', require('./routes/sellers'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/recommendation', require('./routes/recommendationRoutes'));
+app.use('/api/cart', require('./routes/cartRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
